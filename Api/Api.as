@@ -1,5 +1,5 @@
 namespace Api {
-    
+    bool UploadingReplay = false;
     // Workaround method for checkServer to ensure checkServer is only called when webId and playerLogin are not the equal
     void checkServerWaitForValidWebId() {
         while (g_dojo.network.PlayerInfo.Login == g_dojo.network.PlayerInfo.WebServicesUserId) {
@@ -198,10 +198,14 @@ namespace Api {
         @req.Headers = Headers;
 
         // Start and wait until request is finished
+        UploadingReplay = true;
+        
         req.Start();
         while (!req.Finished()) {
             yield();
         }
+
+        UploadingReplay = false;
 
         // Handle error status codes
         int status = req.ResponseCode();

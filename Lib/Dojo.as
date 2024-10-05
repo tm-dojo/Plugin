@@ -177,15 +177,9 @@ class TMDojo
         bool hudOff = !UI::IsGameUIVisible();
 
         if (app.CurrentPlayground !is null && app.CurrentPlayground.Interface !is null) {
-            if (hudOff || @playgroundScript == null) {
-                if (@app.Network.PlaygroundClientScriptAPI != null) {
-                    auto playgroundClientScriptAPI = cast<CGamePlaygroundClientScriptAPI>(app.Network.PlaygroundClientScriptAPI);
-                    if (@playgroundClientScriptAPI != null) {
-                        g_dojo.currentRaceTime = playgroundClientScriptAPI.GameTime - smScript.StartTime;
-                    }
-                }
-            } else {
-                g_dojo.currentRaceTime = smScript.CurrentRaceTime;
+            auto playgroundClientScriptAPI = cast<CGamePlaygroundClientScriptAPI>(app.Network.PlaygroundClientScriptAPI);
+            if (@playgroundClientScriptAPI != null) {
+                g_dojo.currentRaceTime = playgroundClientScriptAPI.GameTime - smScript.StartTime;
             }
         }
 

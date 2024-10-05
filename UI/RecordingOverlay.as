@@ -16,6 +16,7 @@ void drawRecordingOverlay() {
 
     // Define colors
     vec4 white = vec4(1, 1, 1, 1);
+    vec4 orange = vec4(1, 0.5, 0, 1);
     vec4 gray = vec4(0.1, 0.1, 0.1, 1);
     vec4 red = vec4(0.95, 0.05, 0.05, 1);
 
@@ -24,7 +25,15 @@ void drawRecordingOverlay() {
     int circleTop = panelTop + 18;
     nvg::BeginPath();        
     nvg::Circle(vec2(circleLeft, circleTop), 10);
-    nvg::FillColor(g_dojo.recording ? red : gray);
+
+    if (g_dojo.recording) {
+        nvg::FillColor(red);
+    } else if (Api::UploadingReplay) {
+        nvg::FillColor(orange);
+    } else{
+        nvg::FillColor(gray);
+    }
+
     nvg::Fill();
     nvg::StrokeColor(gray);
     nvg::StrokeWidth(3);
@@ -34,7 +43,32 @@ void drawRecordingOverlay() {
     // Recording text
     int textLeft = panelLeft + 38;
     int textTop = panelTop + 23;
-    nvg::FillColor(g_dojo.recording ? red : white);
-    nvg::FillColor(white);
-    nvg::Text(textLeft, textTop, (g_dojo.recording ? "Recording" : "Not Recording"));
+
+    if (g_dojo.recording) {
+        nvg::FillColor(white);
+        nvg::Text(textLeft, textTop, "Recording");
+    } else if (Api::UploadingReplay) {
+        nvg::FillColor(white);
+        nvg::Text(textLeft, textTop, "Uploading");
+
+        nvg::BeginPath();
+
+        float timeOffset = (float(Time::Now) % 2000) / (Math::PI * 100);
+
+        // First arc
+        nvg::Arc(vec2(circleLeft, circleTop), 10.5, 1.2 + timeOffset, timeOffset, nvg::Winding::CCW);
+        nvg::FillColor(orange);
+        nvg::Fill();
+        nvg::ClosePath();
+
+        // Second arc on the opposite side
+        nvg::BeginPath();
+        nvg::Arc(vec2(circleLeft, circleTop), 10.5, 4.3 + timeOffset, 3.1 + timeOffset, nvg::Winding::CCW);
+        nvg::FillColor(orange);
+        nvg::Fill();
+        nvg::ClosePath();
+    } else{
+        nvg::FillColor(white);
+        nvg::Text(textLeft, textTop, "Not Recording");
+    }
 }
